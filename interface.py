@@ -16,7 +16,7 @@ class Interface(tk.Tk):
 
         # Frames
         self.frame0 = ttk.Frame(self, style='Blue.TFrame')
-        self.frame0.place(relx=0, relwidth=1, rely=0, relheight=0.2)
+        self.frame0.place(relx=0, relwidth=0.5, rely=0, relheight=0.2)
         self.frame1 = ttk.Frame(self, style='Blue.TFrame')
         self.frame1.place(relx=0, relwidth=1, rely=0.2, relheight=0.5)
         self.frame2 = ttk.Frame(self, style='Green.TFrame')
@@ -62,5 +62,3 @@ class Interface(tk.Tk):
 if __name__ == "__main__":
     # Shouldn't be launched directly - only for debugging purposes
     gui_obj = Interface()
-    v1, v2, v3 = gui_obj.get_check_buttons()
-    print(v1, v2, v3)
