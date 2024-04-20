@@ -86,8 +86,8 @@ class Interface(tk.Tk):
         #TODO:
 
         # Results
-        self.result_label = ttk.Label(self.frame2, background="Gold", anchor="center", text="")
-        self.result_label.pack()
+        self.result_text = tk.Text(self.frame2, background="Gold")
+        self.result_text.pack(anchor='center')
 
         self.mainloop()
 
@@ -137,7 +137,8 @@ class Interface(tk.Tk):
             bank_accounts = "\n".join(self.results['bank'])
             unpack_data = f"NIP: {self.results['nip']}\nREGON: {self.results['regon']}" \
                           f"\n\nKonta bankowe:\n{bank_accounts}"
-        self.result_label.configure(text=unpack_data)
+        self.result_text.delete(1.0, tk.END)
+        self.result_text.insert(tk.END, unpack_data)
 
 
 if __name__ == "__main__":
