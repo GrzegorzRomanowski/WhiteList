@@ -86,7 +86,7 @@ class Interface(tk.Tk):
         #TODO:
 
         # Results
-        self.result_text = tk.Text(self.frame2, background="Gold")
+        self.result_text = tk.Text(self.frame2, background="Silver", pady=10, padx=10)
         self.result_text.pack(anchor='center')
 
         self.mainloop()
