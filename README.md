@@ -1,3 +1,6 @@
+## The project is in the development phase!!!
+
+<details>
 # Spis treści
 * [Cel i krótki opis](#szczegóły-projektu)
 * [Biblioteki](#biblioteki)
@@ -6,7 +9,6 @@
 
 
 ## Szczegóły projektu
-<details>
 <summary>
 Kliknij tutaj, aby rozwinąć opis projektu.
 </summary>
@@ -35,7 +37,7 @@ Pełny opisy procesu znajduje się na dysku:
 P:\Dział BI i RPA\Zespół RPA\Projekty\...
 ```
 
-</details>
+
 
 
 ## Biblioteki
@@ -63,3 +65,4 @@ Instrukcja i opis jak uruchamiany jest robot na produkcji.
 Instrukcja i opis jak uruchamiać robota do testów.
 
 > **_NOTE:_** Ewentualne ważne uwagi.
+</details>
