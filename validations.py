@@ -18,6 +18,20 @@ def only_digits(number: str) -> str:
     return new_number
 
 
+def format_bank_account(number: str) -> str:
+    """ Format bank account number to contain only digits and spaces.
+    :param number:-> uncleaned bank account
+    :return: formatted bank account
+    """
+    new_number = only_digits(number)
+    account = new_number[0:2]
+    for digit_index in range(2, len(new_number)):
+        if digit_index % 4 == 2:
+            account += " "
+        account += new_number[digit_index]
+    return account
+
+
 def is_bank_account_valid(bank: str) -> bool:
     """ Validates POLISH bank account number checking the number of digits and modulo.
     :param bank:-> like a 10 digits string

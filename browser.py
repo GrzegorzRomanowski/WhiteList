@@ -63,7 +63,10 @@ class WhiteListBrowser(Browser):
         :return:
         """
         time.sleep(1)
-        self.driver.find_element(By.XPATH, r'//*[@id="sendTwo"]').click()
+        try:
+            self.driver.find_element(By.XPATH, r'//*[@id="sendTwo"]').click()
+        except:
+            self.driver.find_element(By.XPATH, r'//*[@id="sendOne"]').click()
 
     def get_results(self) -> dict:
         """ Scrapes all required data from the webpage.
@@ -79,12 +82,14 @@ class WhiteListBrowser(Browser):
             results["error"] = error_msg
         else:  # get all data
             try:
+                # main info
+                info_xpath = r'//*[@id="tableOne"]/div[1]/div/h4'
+                results["info"] = self.driver.find_element(By.XPATH, info_xpath).get_property("innerText")
                 # nip and regon scraping
                 nip_xpath = r'//*[@id="akmf-nip"]/tbody/tr/td[2]'
                 results["nip"] = self.driver.find_element(By.XPATH, nip_xpath).get_property("innerText")
                 regon_xpath = r'//*[@id="akmf-regon"]/tbody/tr/td[2]'
                 results["regon"] = self.driver.find_element(By.XPATH, regon_xpath).get_property("innerText")
-
                 # bank accounts scraping (could be many)
                 bank_xpath = "//*[starts-with(@id, 'akmf-residenceAddress-row-')]"
                 bank_accounts_paths = self.driver.find_elements(By.XPATH, bank_xpath)

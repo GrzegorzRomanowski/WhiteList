@@ -4,6 +4,7 @@ from tkcalendar import Calendar
 from typing import Literal
 
 from browser import WhiteListBrowser, white_list_url
+from excel import BulkData
 
 
 class Interface(tk.Tk):
@@ -79,7 +80,7 @@ class Interface(tk.Tk):
         self.select_date_button = ttk.Button(self.frame3_tab1, text="Wybierz datę", command=self.select_date, state="disabled")
         self.select_date_button.pack()
         # Run button
-        self.run_button = ttk.Button(self.tab1, text="WYKONAJ", command=self.run_tab1)
+        self.run_button = ttk.Button(self.tab1, text="WYKONAJ", command=self.run_tab2)  #TODO:
         self.run_button.place(relx=0, relwidth=1, rely=0.75, relheight=0.25)
 
         # Tab2
@@ -129,6 +130,23 @@ class Interface(tk.Tk):
         print(self.results)
         browser_obj.driver.quit()
         self.print_results()
+
+    def run_tab2(self):
+        browser_obj = WhiteListBrowser(white_list_url)
+        browser_obj.select_validation_method(1)
+        bulk_data_obj = BulkData()
+        bulk_data_obj.format_bank_accounts()
+        bank_accounts_list = bulk_data_obj.make_list_for_browser()
+        for account in bank_accounts_list:
+            browser_obj.input_number(account)
+            browser_obj.submit_button()
+            current_results = browser_obj.get_results()
+            bulk_data_obj.write_scraped_data_to_df(results=current_results, bank_account=account)
+            print(bulk_data_obj.df)
+
+        browser_obj.driver.quit()
+        print("FINAL DF\n")
+        print(bulk_data_obj.df)
 
     def print_results(self):
         if len(self.results["error"]) > 1:
