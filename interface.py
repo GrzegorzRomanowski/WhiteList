@@ -100,7 +100,7 @@ class Interface(tk.Tk):
             self.entry_date.config(state="disabled")
             self.select_date_button.config(state="disabled")
 
-    def get_check_buttons(self):
+    def get_data_from_tab1(self):
         print(self.validation_method_var.get(), self.entry_number.get(), self.changed_date_var.get())
         return self.validation_method_var.get(), self.entry_number.get(), self.changed_date_var.get()
 
@@ -120,7 +120,7 @@ class Interface(tk.Tk):
         confirm_button.pack(pady=5)
 
     def run_tab1(self):
-        via, number, date = self.get_check_buttons()
+        via, number, date = self.get_data_from_tab1()
         browser_obj = WhiteListBrowser(white_list_url)
         browser_obj.select_validation_method(int(via))
         browser_obj.input_number(number)
