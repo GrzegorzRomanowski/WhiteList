@@ -1,8 +1,40 @@
 def cleaning(number: str) -> str:
-    punctuation_marks_to_be_removed = [" ", "-", "/", "\\", ".", ",", "(", ")", "[", "]"]
+    """ Remove some commonly used punctuation marks from the string being a number.
+    :param number:-> input number like PL: 80-180
+    :return: return cleaned number like PL80180
+    """
+    punctuation_marks_to_be_removed = [" ", "-", "/", "\\", ".", ",", "(", ")", "[", "]", ":"]
     for mark in punctuation_marks_to_be_removed:
         number = number.replace(mark, "")
     return number
+
+
+def only_digits(number: str) -> str:
+    """ Remains only digits from the string being a number.
+    :param number:-> input number like PL: 80-180
+    :return: return cleaned number like 80180
+    """
+    new_number = "".join(char for char in number if char.isdigit())
+    return new_number
+
+
+def is_bank_account_valid(bank: str) -> bool:
+    """ Validates POLISH bank account number checking the number of digits and modulo.
+    :param bank:-> like a 10 digits string
+    :return: True or False
+    """
+    bank = cleaning(bank)
+    modified_bank = bank[-24:] + "2521" + bank[-26:-24]  # "2521" is for POLISH bank accounts
+
+    # Is numeric and has 30 digits?
+    if len(modified_bank) != 30 or (not modified_bank.isnumeric()):
+        return False
+
+    # Modulo
+    if int(modified_bank) % 97 == 1:
+        return True
+    else:
+        return False
 
 
 def is_valid_nip(nip: str) -> bool:
@@ -10,9 +42,9 @@ def is_valid_nip(nip: str) -> bool:
     :param nip:-> like a 10 digits string
     :return: True or False
     """
-    nip = cleaning(nip)
+    nip = only_digits(nip)
 
-    # Is numeric and have 10 digits?
+    # Is numeric and has 10 digits?
     if len(nip) != 10 or (not nip.isnumeric()):
         return False
 
@@ -28,33 +60,14 @@ def is_valid_nip(nip: str) -> bool:
         return False
 
 
-def is_bank_account_valid(bank: str) -> bool:
-    """ Validates POLISH bank account number checking the number of digits and modulo.
-    :param bank:-> like a 10 digits string
-    :return: True or False
-    """
-    bank = cleaning(bank)
-    modified_bank = bank[-24:] + "2521" + bank[-26:-24]
-
-    # Is numeric and have 30 digits?
-    if len(modified_bank) != 30 or (not modified_bank.isnumeric()):
-        return False
-
-    # modulo
-    if int(modified_bank) % 97 == 1:
-        return True
-    else:
-        return False
-
-
 def is_regon_valid(regon: str) -> bool:
     """ Validates POLISH REGON checking the number of digits and modulo.
     :param regon:-> like a 7 or 9 digits string
     :return: True or False
     """
-    regon = cleaning(regon)
+    regon = only_digits(regon)
 
-    # Is numeric and have 7 or 9 digits?
+    # Is numeric and has 7 or 9 digits?
     if regon.isnumeric() and (len(regon) == 7 or len(regon) == 9):
         pass
     else:
@@ -74,20 +87,18 @@ def is_regon_valid(regon: str) -> bool:
 
 if __name__ == "__main__":
     # Shouldn't be launched directly - only for debugging purposes
-    assert is_valid_nip("593-21-67-267")
-    assert is_valid_nip("593 21/67\\267")
-    assert not is_valid_nip("593-21-67-268")  # "Wrong modulo"
-    assert not is_valid_nip("593-21-67-26")  # "Too short"
-    assert not is_valid_nip("593-21-6xxx7-267")  # "Containing letters"
-
     assert is_bank_account_valid("77 1240 1268 1111 0010 6850 0503")
     assert is_bank_account_valid("PL77 1240-1268/1111,0010.6850\\0503")
     assert not is_bank_account_valid("PL77 1240 1268 1111 0010 6850 0504")  # Wrong modulo
     assert not is_bank_account_valid("77 1240 1268 1111 0010 6850")  # "Too short"
     assert not is_bank_account_valid("77 1240 1268 1111 text 0010 6850 0503")  # "Containing letters (not in prefix)"
 
+    assert is_valid_nip("593-21-67-267")
+    assert is_valid_nip("593 21/67\\267")
+    assert not is_valid_nip("593-21-67-268")  # "Wrong modulo"
+    assert not is_valid_nip("593-21-67-26")  # "Too short"
+
     assert is_regon_valid("191805758")
-    assert is_regon_valid("191 805-758")
+    assert is_regon_valid("191x805-758")
     assert not is_regon_valid("191805757")  # "Wrong modulo"
     assert not is_regon_valid("19180575")  # "Wrong numbers of digits"
-    assert not is_regon_valid("1918057xxx58")  # "Containing letters"
