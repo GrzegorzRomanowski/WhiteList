@@ -12,7 +12,7 @@ class Interface(tk.Tk):
         super().__init__()
         self.title("White List")
         self.iconbitmap(r"tax.ico")
-        self.geometry("600x750")
+        self.geometry("744x735")
 
         # Saved values
         self.results: dict = dict()
@@ -23,11 +23,11 @@ class Interface(tk.Tk):
 
         # Main frames
         self.frame0 = ttk.Frame(self, style='Blue.TFrame')
-        self.frame0.place(relx=0, relwidth=0.5, rely=0, relheight=0.2)
+        self.frame0.place(relx=0, relwidth=0.33, rely=0, relheight=0.2)
         self.frame1 = ttk.Frame(self, style='Blue.TFrame')
-        self.frame1.place(relx=0, relwidth=1, rely=0.2, relheight=0.2)
+        self.frame1.place(relx=0.33, relwidth=0.67, rely=0, relheight=0.2)
         self.frame2 = ttk.Frame(self, style='Green.TFrame')
-        self.frame2.place(relx=0, relwidth=1, rely=0.4, relheight=0.6)
+        self.frame2.place(relx=0, relwidth=1, rely=0.2, relheight=0.8)
 
         # Photo
         def resize_image(event):
@@ -79,15 +79,29 @@ class Interface(tk.Tk):
         self.entry_date.pack()
         self.select_date_button = ttk.Button(self.frame3_tab1, text="Wybierz datę", command=self.select_date, state="disabled")
         self.select_date_button.pack()
-        # Run button
-        self.run_button = ttk.Button(self.tab1, text="WYKONAJ", command=self.run_tab2)  #TODO:
-        self.run_button.place(relx=0, relwidth=1, rely=0.75, relheight=0.25)
+        # Run button 1
+        self.run_button1 = ttk.Button(self.tab1, text="WYKONAJ", command=self.run_tab1)
+        self.run_button1.place(relx=0, relwidth=1, rely=0.75, relheight=0.25)
 
         # Tab2
-        #TODO:
+        self.frame1_tab2 = ttk.Frame(self.tab2)
+        self.frame1_tab2.place(relx=0, relwidth=1, rely=0, relheight=0.5)
+        self.frame2_tab2 = ttk.Frame(self.tab2)
+        self.frame2_tab2.place(relx=0, relwidth=1, rely=0.5, relheight=0.25)
+        # Tab2 buttons
+        self.button1_tab2 = ttk.Button(self.frame1_tab2, text="Edytuj dane wsadowe", command=None)
+        self.button1_tab2.place(relx=0, relwidth=0.5, rely=0, relheight=1)
+        self.button2_tab2 = ttk.Button(self.frame1_tab2, text="Otwórz dane wyjściowe", command=None)
+        self.button2_tab2.place(relx=0.5, relwidth=0.5, rely=0, relheight=1)
+        # Progress bar
+        self.progress_bar = ttk.Progressbar(self.frame2_tab2, orient="horizontal", mode="determinate")
+        self.progress_bar.pack(pady=2, padx=2, fill="x")
+        # Run button 2
+        self.run_button2 = ttk.Button(self.tab2, text="WYKONAJ", command=self.run_tab2)
+        self.run_button2.place(relx=0, relwidth=1, rely=0.75, relheight=0.25)
 
         # Results
-        self.result_text = tk.Text(self.frame2, background="Silver", pady=10, padx=10)
+        self.result_text = tk.Text(self.frame2, background="Silver", pady=10, padx=10, height=35, width=89)
         self.result_text.pack(anchor='center')
 
         self.mainloop()
@@ -132,21 +146,30 @@ class Interface(tk.Tk):
         self.print_results()
 
     def run_tab2(self):
+        # Resetuj pasek postępu
+        self.progress_bar["value"] = 0
+
         browser_obj = WhiteListBrowser(white_list_url)
         browser_obj.select_validation_method(1)
         bulk_data_obj = BulkData()
         bulk_data_obj.format_bank_accounts()
         bank_accounts_list = bulk_data_obj.make_list_for_browser()
-        for account in bank_accounts_list:
+        for i, account in enumerate(bank_accounts_list, start=1):
             browser_obj.input_number(account)
             browser_obj.submit_button()
             current_results = browser_obj.get_results()
             bulk_data_obj.write_scraped_data_to_df(results=current_results, bank_account=account)
-            print(bulk_data_obj.df)
+
+            progress = (i / len(bank_accounts_list)) * 100
+            self.progress_bar["value"] = progress
+            self.update_idletasks()
 
         browser_obj.driver.quit()
-        print("FINAL DF\n")
         print(bulk_data_obj.df)
+        self.result_text.delete(1.0, tk.END)
+        self.result_text.insert(tk.END, bulk_data_obj.df.to_string(index=False,
+                                                                   na_rep="----------",
+                                                                   justify="center"))
 
     def print_results(self):
         if len(self.results["error"]) > 1:

@@ -24,7 +24,8 @@ class Browser:
         """ Setting chrome options such as maximizing the window, not closing the window after script completion, etc.
         :return:
         """
-        self.options.add_argument("--start-maximized")  # alternatively > self.driver.maximize_window()
+        # self.options.add_argument("--start-maximized")  # alternatively > self.driver.maximize_window()
+        self.options.add_argument("--headless")  # in background
         self.options.add_experimental_option('detach', True)
 
 
