@@ -1,3 +1,4 @@
+import os
 import tkinter as tk
 from tkinter import ttk
 from tkcalendar import Calendar
@@ -18,15 +19,15 @@ class Interface(tk.Tk):
         self.results: dict = dict()
         # Styles
         self.ttk_style = ttk.Style()
-        self.ttk_style.configure('Blue.TFrame', background='blue')
+        self.ttk_style.configure('Blue.TFrame', background='light blue')
         self.ttk_style.configure('Green.TFrame', background='green')
 
         # Main frames
-        self.frame0 = ttk.Frame(self, style='Blue.TFrame')
+        self.frame0 = ttk.Frame(self, style='Green.TFrame')
         self.frame0.place(relx=0, relwidth=0.33, rely=0, relheight=0.2)
-        self.frame1 = ttk.Frame(self, style='Blue.TFrame')
+        self.frame1 = ttk.Frame(self, style='Green.TFrame')
         self.frame1.place(relx=0.33, relwidth=0.67, rely=0, relheight=0.2)
-        self.frame2 = ttk.Frame(self, style='Green.TFrame')
+        self.frame2 = ttk.Frame(self, style='Blue.TFrame')
         self.frame2.place(relx=0, relwidth=1, rely=0.2, relheight=0.8)
 
         # Photo
@@ -89,9 +90,13 @@ class Interface(tk.Tk):
         self.frame2_tab2 = ttk.Frame(self.tab2)
         self.frame2_tab2.place(relx=0, relwidth=1, rely=0.5, relheight=0.25)
         # Tab2 buttons
-        self.button1_tab2 = ttk.Button(self.frame1_tab2, text="Edytuj dane wsadowe", command=None)
+        self.button1_tab2 = ttk.Button(self.frame1_tab2,
+                                       text="Edytuj dane wsadowe",
+                                       command=lambda: Interface.open_excel_file(r'data/input.xlsx'))
         self.button1_tab2.place(relx=0, relwidth=0.5, rely=0, relheight=1)
-        self.button2_tab2 = ttk.Button(self.frame1_tab2, text="Otwórz dane wyjściowe", command=None)
+        self.button2_tab2 = ttk.Button(self.frame1_tab2,
+                                       text="Otwórz dane wyjściowe",
+                                       command=lambda: Interface.open_excel_file(r'data/output.xlsx'))
         self.button2_tab2.place(relx=0.5, relwidth=0.5, rely=0, relheight=1)
         # Progress bar
         self.progress_bar = ttk.Progressbar(self.frame2_tab2, orient="horizontal", mode="determinate")
@@ -146,7 +151,7 @@ class Interface(tk.Tk):
         self.print_results()
 
     def run_tab2(self):
-        # Resetuj pasek postępu
+        # Reset progress bar
         self.progress_bar["value"] = 0
 
         browser_obj = WhiteListBrowser(white_list_url)
@@ -166,10 +171,16 @@ class Interface(tk.Tk):
 
         browser_obj.driver.quit()
         print(bulk_data_obj.df)
+        bulk_data_obj.save_output_to_file()
         self.result_text.delete(1.0, tk.END)
         self.result_text.insert(tk.END, bulk_data_obj.df.to_string(index=False,
                                                                    na_rep="----------",
                                                                    justify="center"))
+
+    @staticmethod
+    def open_excel_file(path: str):
+        full_path = os.path.abspath(path)
+        os.system(f'start "EXCEL.EXE" "{full_path}"')
 
     def print_results(self):
         if len(self.results["error"]) > 1:

@@ -28,6 +28,16 @@ class BulkData:
             self.df.loc[condition, "Rezultat"] = results["info"]
             self.df.loc[condition, "NIP"] = results["nip"]
 
+    def save_output_to_file(self):
+        # self.df.to_excel(r'data/output.xlsx', index=False)
+
+        with pd.ExcelWriter(r'data/output.xlsx', engine='openpyxl', mode='w') as writer:
+            self.df.to_excel(writer, sheet_name="output", index=False)
+            ws = writer.sheets["output"]
+            for column in ws.columns:
+                length = max(len(str(cell.value)) for cell in column)
+                ws.column_dimensions[column[0].column_letter].width = length + 2
+
 
 if __name__ == "__main__":
     # Shouldn't be launched directly - only for debugging purposes
