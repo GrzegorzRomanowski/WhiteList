@@ -1,12 +1,17 @@
 import time
+from typing import Dict, Union, Literal
+from collections import defaultdict
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
-from typing import Dict, Union, Literal
-from collections import defaultdict
+from selenium.webdriver.support.ui import WebDriverWait as DWait
+from selenium.webdriver.support import expected_conditions as ec
+from selenium.common.exceptions import TimeoutException, NoSuchElementException
+
 
 # Hardcoded variables
 white_list_url = r"https://www.podatki.gov.pl/wykaz-podatnikow-vat-wyszukiwarka"
+wait_time = 3
 
 
 class Browser:
@@ -46,8 +51,11 @@ class WhiteListBrowser(Browser):
         :param via:-> 1-bank account; 2-NIP; 3-REGON
         :return:
         """
-        time.sleep(1)
         via_xpath = fr'//*[@id="wyszukiwarka"]/div[1]/div[1]/fieldset[{via}]/label/span'
+        try:
+            DWait(self.driver, wait_time).until(ec.presence_of_element_located((By.XPATH, via_xpath)))
+        except TimeoutException:
+            print("Timeout reached while selecting method of validation.")
         self.driver.find_element(By.XPATH, via_xpath).click()
 
     def input_number(self, number: str):
@@ -55,18 +63,25 @@ class WhiteListBrowser(Browser):
         :param number:-> number as a numeric string
         :return:
         """
-        time.sleep(1)
-        self.driver.find_element(By.XPATH, r'//*[@id="inputType"]').clear()
-        self.driver.find_element(By.XPATH, r'//*[@id="inputType"]').send_keys(number)
+        input_number_xpath = r'//*[@id="inputType"]'
+        try:
+            DWait(self.driver, wait_time).until(ec.presence_of_element_located((By.XPATH, input_number_xpath)))
+        except TimeoutException:
+            print("Timeout reached while typing a number.")
+        self.driver.find_element(By.XPATH, input_number_xpath).clear()
+        self.driver.find_element(By.XPATH, input_number_xpath).send_keys(number)
 
     def submit_button(self):
         """ Click submit button on webpage.
         :return:
         """
-        time.sleep(1)
+        try:
+            DWait(self.driver, wait_time).until(ec.presence_of_element_located((By.XPATH, r'//*[@id="sendTwo"]')))
+        except TimeoutException:
+            print("Timeout reached while clicking submit button.")
         try:
             self.driver.find_element(By.XPATH, r'//*[@id="sendTwo"]').click()
-        except:
+        except NoSuchElementException:
             self.driver.find_element(By.XPATH, r'//*[@id="sendOne"]').click()
 
     def get_results(self) -> dict:
@@ -74,8 +89,8 @@ class WhiteListBrowser(Browser):
         :return:-> dict with results or errors
         """
         results: Dict[str, Union[str, list]] = defaultdict(list)
-        time.sleep(1)
         # check if error on webpage is displayed
+        DWait(self.driver, wait_time).until(ec.presence_of_element_located((By.XPATH, r'//*[@id="errorBox"]')))
         error_box_visible = self.driver.find_element(By.XPATH, r'//*[@id="errorBox"]').is_displayed()
         if error_box_visible:  # get error message to results
             error_xpath = r'//*[@id="errorBox"]/div/div[1]/h4'
@@ -106,5 +121,5 @@ if __name__ == "__main__":
     # Shouldn't be launched directly - only for debugging purposes
     white_list_obj = WhiteListBrowser(url=white_list_url)
     white_list_obj()
-    time.sleep(2)
+    time.sleep(3)
     white_list_obj.driver.quit()
