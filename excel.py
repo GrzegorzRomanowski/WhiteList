@@ -1,5 +1,4 @@
 import pandas as pd
-import openpyxl
 
 from validations import is_bank_account_valid, format_bank_account
 

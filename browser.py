@@ -1,5 +1,5 @@
 import time
-from typing import Dict, Union, Literal
+from typing import Dict, Union
 from collections import defaultdict
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -46,7 +46,7 @@ class WhiteListBrowser(Browser):
         self.submit_button()
         print(self.get_results())
 
-    def select_validation_method(self, via: Literal[1, 2, 3]):
+    def select_validation_method(self, via: int):
         """ Select method of validation on webpage.
         :param via:-> 1-bank account; 2-NIP; 3-REGON
         :return:
@@ -112,7 +112,7 @@ class WhiteListBrowser(Browser):
                 for row, _ in enumerate(bank_accounts_paths):
                     current_xpath = f'//*[@id="akmf-residenceAddress-row-{row}"]'
                     results["bank"].append(self.driver.find_element(By.XPATH, current_xpath).get_property("innerText"))
-            except Exception:
+            except NoSuchElementException:
                 results["error"] = "Scraping error"
         return results
 

@@ -61,7 +61,10 @@ class Interface(tk.Tk):
         self.frame3_tab1.place(relx=0.7, relwidth=0.3, rely=0, relheight=0.75)
         # Radio buttons
         self.validation_method_var = tk.IntVar(value=1)
-        self.method_1 = ttk.Radiobutton(self.frame1_tab1, text="Numer konta", variable=self.validation_method_var, value=1)
+        self.method_1 = ttk.Radiobutton(self.frame1_tab1,
+                                        text="Numer konta",
+                                        variable=self.validation_method_var,
+                                        value=1)
         self.method_1.pack(anchor='w')
         self.method_2 = ttk.Radiobutton(self.frame1_tab1, text="NIP", variable=self.validation_method_var, value=2)
         self.method_2.pack(anchor='w')
@@ -74,11 +77,17 @@ class Interface(tk.Tk):
         self.entry_number.pack(fill="x", expand=True)
         # Date
         self.changed_date_var = tk.BooleanVar(value=False)
-        self.changed_date = ttk.Checkbutton(self.frame3_tab1, text="Inna data niż dzisiejsza?", variable=self.changed_date_var, command=self.entry_on_off)
+        self.changed_date = ttk.Checkbutton(self.frame3_tab1,
+                                            text="Inna data niż dzisiejsza?",
+                                            variable=self.changed_date_var,
+                                            command=self.entry_on_off)
         self.changed_date.pack()
         self.entry_date = ttk.Entry(self.frame3_tab1, state="disabled")
         self.entry_date.pack()
-        self.select_date_button = ttk.Button(self.frame3_tab1, text="Wybierz datę", command=self.select_date, state="disabled")
+        self.select_date_button = ttk.Button(self.frame3_tab1,
+                                             text="Wybierz datę",
+                                             command=self.select_date,
+                                             state="disabled")
         self.select_date_button.pack()
         # Run button 1
         self.run_button1 = ttk.Button(self.tab1, text="WYKONAJ", command=self.run_tab1)
@@ -120,7 +129,7 @@ class Interface(tk.Tk):
             self.entry_date.config(state="disabled")
             self.select_date_button.config(state="disabled")
 
-    def get_data_from_tab1(self):
+    def get_data_from_tab1(self) -> (Literal[1, 2, 3], str, bool):
         print(self.validation_method_var.get(), self.entry_number.get(), self.changed_date_var.get())
         return self.validation_method_var.get(), self.entry_number.get(), self.changed_date_var.get()
 
