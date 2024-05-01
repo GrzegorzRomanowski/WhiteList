@@ -4,7 +4,7 @@ from tkinter import ttk
 from tkcalendar import Calendar
 from typing import Literal
 
-from browser import WhiteListBrowser, white_list_url
+from browser import WhiteListBrowser, WHITE_LIST_URL
 from excel import BulkData
 
 
@@ -150,7 +150,7 @@ class Interface(tk.Tk):
 
     def run_tab1(self):
         via, number, date = self.get_data_from_tab1()
-        browser_obj = WhiteListBrowser(white_list_url)
+        browser_obj = WhiteListBrowser(WHITE_LIST_URL)
         browser_obj.select_validation_method(int(via))
         browser_obj.input_number(number)
         browser_obj.submit_button()
@@ -163,7 +163,7 @@ class Interface(tk.Tk):
         # Reset progress bar
         self.progress_bar["value"] = 0
 
-        browser_obj = WhiteListBrowser(white_list_url)
+        browser_obj = WhiteListBrowser(WHITE_LIST_URL)
         browser_obj.select_validation_method(1)
         bulk_data_obj = BulkData()
         bulk_data_obj.format_bank_accounts()

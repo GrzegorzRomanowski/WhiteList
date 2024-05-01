@@ -9,15 +9,15 @@ from selenium.webdriver.support import expected_conditions as ec
 from selenium.common.exceptions import TimeoutException, NoSuchElementException
 
 
-# Hardcoded variables
-white_list_url = r"https://www.podatki.gov.pl/wykaz-podatnikow-vat-wyszukiwarka"
-wait_time = 3
+# Hardcoded constants
+WHITE_LIST_URL = r"https://www.podatki.gov.pl/wykaz-podatnikow-vat-wyszukiwarka"
+WAIT_TIME = 2
 
 
 class Browser:
-    def __init__(self, url: str) -> None:
+    def __init__(self, url: str):
         """ Creates a Chrome browser object.
-        :param url:-> url of main page as string
+        :param url: url of main page as string
         """
         self.URL = url
         self.options = Options()
@@ -29,13 +29,13 @@ class Browser:
         """ Setting chrome options such as maximizing the window, not closing the window after script completion, etc.
         :return:
         """
-        # self.options.add_argument("--start-maximized")  # alternatively > self.driver.maximize_window()
-        self.options.add_argument("--headless")  # in background
+        self.options.add_argument("--start-maximized")  # alternatively > self.driver.maximize_window()
+        # self.options.add_argument("--headless")  # in background
         self.options.add_experimental_option('detach', True)
 
 
 class WhiteListBrowser(Browser):
-    URL = white_list_url
+    URL = WHITE_LIST_URL
 
     def __call__(self):
         """ Launches all methods mostly for debugging purposes.
@@ -48,50 +48,49 @@ class WhiteListBrowser(Browser):
 
     def select_validation_method(self, via: int):
         """ Select method of validation on webpage.
-        :param via:-> 1-bank account; 2-NIP; 3-REGON
+        :param via: 1-bank account; 2-NIP; 3-REGON
         :return:
         """
         via_xpath = fr'//*[@id="wyszukiwarka"]/div[1]/div[1]/fieldset[{via}]/label/span'
         try:
-            DWait(self.driver, wait_time).until(ec.presence_of_element_located((By.XPATH, via_xpath)))
+            DWait(self.driver, WAIT_TIME).until(ec.presence_of_element_located((By.XPATH, via_xpath)))
         except TimeoutException:
-            print("Timeout reached while selecting method of validation.")
+            raise TimeoutException("Timeout reached while selecting method of validation.")
         self.driver.find_element(By.XPATH, via_xpath).click()
 
     def input_number(self, number: str):
         """ Input a number in searching input field on webpage.
-        :param number:-> number as a numeric string
+        :param number: number as a numeric string
         :return:
         """
         input_number_xpath = r'//*[@id="inputType"]'
         try:
-            DWait(self.driver, wait_time).until(ec.presence_of_element_located((By.XPATH, input_number_xpath)))
+            DWait(self.driver, WAIT_TIME).until(ec.presence_of_element_located((By.XPATH, input_number_xpath)))
         except TimeoutException:
-            print("Timeout reached while typing a number.")
+            raise TimeoutException("Timeout reached while typing a number.")
         self.driver.find_element(By.XPATH, input_number_xpath).clear()
         self.driver.find_element(By.XPATH, input_number_xpath).send_keys(number)
 
     def submit_button(self):
-        """ Click submit button on webpage.
+        """ Click submit button on webpage. On first run button has id="sendTwo", on next run id="sendOne".
         :return:
         """
         try:
-            DWait(self.driver, wait_time).until(ec.presence_of_element_located((By.XPATH, r'//*[@id="sendTwo"]')))
+            one = DWait(self.driver, WAIT_TIME).until(ec.element_to_be_clickable((By.XPATH, r'//*[@id="sendOne"]')))
+            one.click()
         except TimeoutException:
-            print("Timeout reached while clicking submit button.")
-        try:
-            self.driver.find_element(By.XPATH, r'//*[@id="sendTwo"]').click()
-        except NoSuchElementException:
-            self.driver.find_element(By.XPATH, r'//*[@id="sendOne"]').click()
+            two = DWait(self.driver, WAIT_TIME).until(ec.element_to_be_clickable((By.XPATH, r'//*[@id="sendTwo"]')))
+            two.click()
 
     def get_results(self) -> dict:
         """ Scrapes all required data from the webpage.
-        :return:-> dict with results or errors
+        :return: dict with results or errors
         """
         results: Dict[str, Union[str, list]] = defaultdict(list)
         # check if error on webpage is displayed
-        DWait(self.driver, wait_time).until(ec.presence_of_element_located((By.XPATH, r'//*[@id="errorBox"]')))
+        DWait(self.driver, WAIT_TIME).until(ec.presence_of_element_located((By.XPATH, r'//*[@id="errorBox"]')))
         error_box_visible = self.driver.find_element(By.XPATH, r'//*[@id="errorBox"]').is_displayed()
+
         if error_box_visible:  # get error message to results
             error_xpath = r'//*[@id="errorBox"]/div/div[1]/h4'
             error_msg = self.driver.find_element(By.XPATH, error_xpath).get_property("innerText")
@@ -100,6 +99,7 @@ class WhiteListBrowser(Browser):
             try:
                 # main info
                 info_xpath = r'//*[@id="tableOne"]/div[1]/div/h4'
+                DWait(self.driver, WAIT_TIME).until(ec.presence_of_element_located((By.XPATH, info_xpath)))
                 results["info"] = self.driver.find_element(By.XPATH, info_xpath).get_property("innerText")
                 # nip and regon scraping
                 nip_xpath = r'//*[@id="akmf-nip"]/tbody/tr/td[2]'
@@ -112,14 +112,14 @@ class WhiteListBrowser(Browser):
                 for row, _ in enumerate(bank_accounts_paths):
                     current_xpath = f'//*[@id="akmf-residenceAddress-row-{row}"]'
                     results["bank"].append(self.driver.find_element(By.XPATH, current_xpath).get_property("innerText"))
-            except NoSuchElementException:
+            except (NoSuchElementException, TimeoutException):
                 results["error"] = "Scraping error"
         return results
 
 
 if __name__ == "__main__":
     # Shouldn't be launched directly - only for debugging purposes
-    white_list_obj = WhiteListBrowser(url=white_list_url)
+    white_list_obj = WhiteListBrowser(url=WHITE_LIST_URL)
     white_list_obj()
-    time.sleep(3)
+    time.sleep(5)
     white_list_obj.driver.quit()
