@@ -2,11 +2,12 @@ import pandas as pd
 from typing import List, Dict, Union
 
 from validations import is_valid_bank_account, format_bank_account
+from config import config_obj
 
 
 class BulkData:
     def __init__(self):
-        self.df = pd.read_excel(r"data/input.xlsx")
+        self.df = pd.read_excel(rf"{config_obj.BULK_DATA_PATH}/input.xlsx")
 
     def format_bank_accounts(self):
         """ Apply 'format_bank_account' function on all valid accounts in "Numer konta" column.
@@ -42,7 +43,7 @@ class BulkData:
         """ Saves data in an Excel file and adjust the column width to contained data.
         :return:
         """
-        with pd.ExcelWriter(r'data/output.xlsx', engine='openpyxl', mode='w') as writer:
+        with pd.ExcelWriter(rf'{config_obj.BULK_DATA_PATH}/output.xlsx', engine='openpyxl', mode='w') as writer:
             self.df.to_excel(writer, sheet_name="output", index=False)
             ws = writer.sheets["output"]
             for column in ws.columns:

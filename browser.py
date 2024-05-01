@@ -10,10 +10,13 @@ from selenium.webdriver.support.ui import WebDriverWait as DWait
 from selenium.webdriver.support import expected_conditions as ec
 from selenium.common.exceptions import TimeoutException, NoSuchElementException
 
+from config import config_obj
 
-# Hardcoded constants
-WHITE_LIST_URL = r"https://www.podatki.gov.pl/wykaz-podatnikow-vat-wyszukiwarka"
-WAIT_TIME = 2
+
+# Constants from .env
+WHITE_LIST_URL = config_obj.WHITE_LIST_URL
+WAIT_TIME = config_obj.WAIT_TIME
+VISIBLE = config_obj.VISIBLE
 
 
 class Browser:
@@ -31,9 +34,12 @@ class Browser:
         """ Setting chrome options such as maximizing the window, not closing the window after script completion, etc.
         :return:
         """
-        self.options.add_argument("--start-maximized")  # alternatively > self.driver.maximize_window()
-        # self.options.add_argument("--headless")  # in background
-        self.options.add_experimental_option('detach', True)
+        if VISIBLE:
+            self.options.add_argument("--start-maximized")  # alternatively > self.driver.maximize_window()
+            self.options.add_experimental_option('detach', True)
+        else:
+            self.options.add_argument("--start-maximized")  # alternatively > self.driver.maximize_window()
+            self.options.add_argument("--headless")  # in background
 
 
 class WhiteListBrowser(Browser):

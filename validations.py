@@ -137,6 +137,6 @@ if __name__ == "__main__":
     assert not is_valid_regon("19180575")  # "Wrong numbers of digits"
 
     assert is_valid_date("01-04-2024")
-    assert not is_valid_date("01-04-2124")  # Later than today
-    assert not is_valid_date("01-13-2024")  # Wrong month
-    assert not is_valid_date("2024-04-01")  # Wrong format
+    assert not is_valid_date("01-04-2124")  # "Later than today"
+    assert not is_valid_date("01-13-2024")  # "Wrong month"
+    assert not is_valid_date("2024-04-01")  # "Wrong format"

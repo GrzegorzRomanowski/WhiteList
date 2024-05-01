@@ -7,6 +7,11 @@ from typing import Literal, Dict, Union
 from browser import WhiteListBrowser, WHITE_LIST_URL
 from excel import BulkData
 from validations import is_valid_date
+from config import config_obj
+
+
+# Constants from .env
+BULK_DATA_PATH = config_obj.BULK_DATA_PATH
 
 
 class Interface(tk.Tk):
@@ -103,11 +108,11 @@ class Interface(tk.Tk):
         # Tab2 buttons
         self.button1_tab2 = ttk.Button(self.frame1_tab2,
                                        text="Edytuj dane wsadowe",
-                                       command=lambda: Interface.open_excel_file(r'data/input.xlsx'))
+                                       command=lambda: Interface.open_excel_file(rf'{BULK_DATA_PATH}/input.xlsx'))
         self.button1_tab2.place(relx=0, relwidth=0.5, rely=0, relheight=1)
         self.button2_tab2 = ttk.Button(self.frame1_tab2,
                                        text="Otwórz dane wyjściowe",
-                                       command=lambda: Interface.open_excel_file(r'data/output.xlsx'))
+                                       command=lambda: Interface.open_excel_file(rf'{BULK_DATA_PATH}/output.xlsx'))
         self.button2_tab2.place(relx=0.5, relwidth=0.5, rely=0, relheight=1)
         # Progress bar
         self.progress_bar = ttk.Progressbar(self.frame2_tab2, orient="horizontal", mode="determinate")
