@@ -71,6 +71,19 @@ class WhiteListBrowser(Browser):
         self.driver.find_element(By.XPATH, input_number_xpath).clear()
         self.driver.find_element(By.XPATH, input_number_xpath).send_keys(number)
 
+    def type_date(self, date_str: str):
+        """ Select the checkbox 'Zmień datę' and type a new one.
+        :param date_str: new date to be typed
+        :return:
+        """
+        self.driver.find_element(By.XPATH, r'//*[@id="submit"]/div[2]/div[3]/div[2]/div[2]/div/div/label').click()
+        try:
+            DWait(self.driver, WAIT_TIME).until(ec.element_to_be_clickable((By.XPATH, r'//*[@id="inputType3"]')))
+        except TimeoutException:
+            raise TimeoutException("Timeout reached while typing date.")
+        self.driver.find_element(By.XPATH, r'//*[@id="inputType3"]').clear()
+        self.driver.find_element(By.XPATH, r'//*[@id="inputType3"]').send_keys(date_str)
+
     def submit_button(self):
         """ Click submit button on webpage. On first run button has id="sendTwo", on next run id="sendOne".
         :return:
@@ -82,7 +95,7 @@ class WhiteListBrowser(Browser):
             two = DWait(self.driver, WAIT_TIME).until(ec.element_to_be_clickable((By.XPATH, r'//*[@id="sendTwo"]')))
             two.click()
 
-    def get_results(self) -> dict:
+    def get_results(self) -> Dict[str, Union[str, list]]:
         """ Scrapes all required data from the webpage.
         :return: dict with results or errors
         """

@@ -2,7 +2,7 @@ import os
 import tkinter as tk
 from tkinter import ttk
 from tkcalendar import Calendar
-from typing import Literal
+from typing import Literal, Dict, Union
 
 from browser import WhiteListBrowser, WHITE_LIST_URL
 from excel import BulkData
@@ -16,7 +16,7 @@ class Interface(tk.Tk):
         self.geometry("744x735")
 
         # Saved values
-        self.results: dict = dict()
+        self.results: Dict[str, Union[str, list]] = dict()
         # Styles
         self.ttk_style = ttk.Style()
         self.ttk_style.configure('Blue.TFrame', background='light blue')
@@ -52,7 +52,7 @@ class Interface(tk.Tk):
         self.notebook.add(self.tab2, text="  Weryfikacja listy w Excelu     ")
         self.notebook.pack(fill='both', expand=True, padx=5, pady=5)
 
-        # Tab1
+        # region Tab1
         self.frame1_tab1 = ttk.Frame(self.tab1)
         self.frame1_tab1.place(relx=0, relwidth=0.3, rely=0, relheight=0.75)
         self.frame2_tab1 = ttk.Frame(self.tab1)
@@ -92,8 +92,9 @@ class Interface(tk.Tk):
         # Run button 1
         self.run_button1 = ttk.Button(self.tab1, text="WYKONAJ", command=self.run_tab1)
         self.run_button1.place(relx=0, relwidth=1, rely=0.75, relheight=0.25)
+        # endregion
 
-        # Tab2
+        # region Tab2
         self.frame1_tab2 = ttk.Frame(self.tab2)
         self.frame1_tab2.place(relx=0, relwidth=1, rely=0, relheight=0.5)
         self.frame2_tab2 = ttk.Frame(self.tab2)
@@ -113,6 +114,7 @@ class Interface(tk.Tk):
         # Run button 2
         self.run_button2 = ttk.Button(self.tab2, text="WYKONAJ", command=self.run_tab2)
         self.run_button2.place(relx=0, relwidth=1, rely=0.75, relheight=0.25)
+        # endregion
 
         # Results
         self.result_text = tk.Text(self.frame2, background="Silver", pady=10, padx=10, height=35, width=89)
@@ -129,9 +131,10 @@ class Interface(tk.Tk):
             self.entry_date.config(state="disabled")
             self.select_date_button.config(state="disabled")
 
-    def get_data_from_tab1(self) -> (Literal[1, 2, 3], str, bool):
-        print(self.validation_method_var.get(), self.entry_number.get(), self.changed_date_var.get())
-        return self.validation_method_var.get(), self.entry_number.get(), self.changed_date_var.get()
+    def get_data_from_tab1(self) -> (Literal[1, 2, 3], str, str):
+        different_date_bool = self.changed_date_var.get()
+        different_date_str = self.entry_date.get() if different_date_bool else ""
+        return self.validation_method_var.get(), self.entry_number.get(), different_date_str
 
     def select_date(self):
         top = tk.Toplevel(self)
@@ -153,6 +156,8 @@ class Interface(tk.Tk):
         browser_obj = WhiteListBrowser(WHITE_LIST_URL)
         browser_obj.select_validation_method(int(via))
         browser_obj.input_number(number)
+        if date:
+            browser_obj.type_date(date_str=date)
         browser_obj.submit_button()
         self.results = browser_obj.get_results()
         print(self.results)
