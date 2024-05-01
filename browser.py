@@ -119,8 +119,11 @@ class WhiteListBrowser(Browser):
         """
         results: Dict[str, Union[str, list]] = defaultdict(list)
         # Check if error on webpage is displayed.
-        DWait(self.driver, WAIT_TIME).until(ec.presence_of_element_located((By.XPATH, r'//*[@id="errorBox"]')))
-        error_box_visible = self.driver.find_element(By.XPATH, r'//*[@id="errorBox"]').is_displayed()
+        try:
+            DWait(self.driver, WAIT_TIME).until(ec.element_to_be_clickable((By.XPATH, r'//*[@id="errorBox"]')))
+            error_box_visible = self.driver.find_element(By.XPATH, r'//*[@id="errorBox"]').is_displayed()
+        except TimeoutException:
+            error_box_visible = False
 
         if error_box_visible:  # get error message to results
             error_xpath = r'//*[@id="errorBox"]/div/div[1]/h4'
@@ -153,4 +156,3 @@ if __name__ == "__main__":
     white_list_obj = WhiteListBrowser(url=WHITE_LIST_URL)
     white_list_obj()
     time.sleep(5)
-    white_list_obj.driver.quit()

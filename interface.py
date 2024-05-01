@@ -182,7 +182,6 @@ class Interface(tk.Tk):
             browser_obj.type_date(date_str=date)
         browser_obj.submit_button()
         self.results = browser_obj.get_results()
-        browser_obj.driver.quit()
         self.print_results()
 
     def run_tab2(self):
@@ -206,7 +205,6 @@ class Interface(tk.Tk):
             self.progress_bar["value"] = progress
             self.update_idletasks()
 
-        browser_obj.driver.quit()
         bulk_data_obj.save_output_to_file()
         self.result_text.delete(1.0, tk.END)
         self.result_text.insert(tk.END, bulk_data_obj.df.to_string(index=False,
