@@ -8,10 +8,16 @@ class BulkData:
         self.df = pd.read_excel(r"data/input.xlsx")
 
     def format_bank_accounts(self):
+        """ Apply 'format_bank_account' function on all valid accounts in "Numer konta" column.
+        :return:
+        """
         self.df["Numer konta"] = self.df["Numer konta"].apply(
             lambda x: format_bank_account(x) if is_bank_account_valid(x) else x)
 
     def make_list_for_browser(self) -> list:
+        """ Make a list of valid accounts to iterate through it and fill "Rezultat" column.
+        :return: list of account which can be checked on webpage
+        """
         accounts_list = self.df["Numer konta"].to_list()
         accounts_list = [account for account in accounts_list if is_bank_account_valid(account)]
         self.df["Rezultat"] = self.df["Numer konta"].apply(
@@ -19,8 +25,12 @@ class BulkData:
         return accounts_list
 
     def write_scraped_data_to_df(self, results: dict, bank_account: str):
+        """ Write scraped data to DataFrame for specified bank account (for one row).
+        :param results: dict with scrapped data by browser
+        :param bank_account: specified bank account
+        :return:
+        """
         condition = self.df["Numer konta"] == bank_account
-        print(condition)
         if results.get("error") and len(results.get("error")) > 1:
             self.df.loc[condition, "Rezultat"] = results["error"]
         else:
@@ -28,8 +38,9 @@ class BulkData:
             self.df.loc[condition, "NIP"] = results["nip"]
 
     def save_output_to_file(self):
-        # self.df.to_excel(r'data/output.xlsx', index=False)
-
+        """ Saves data in an Excel file and adjust the column width to contained data.
+        :return:
+        """
         with pd.ExcelWriter(r'data/output.xlsx', engine='openpyxl', mode='w') as writer:
             self.df.to_excel(writer, sheet_name="output", index=False)
             ws = writer.sheets["output"]
