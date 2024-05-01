@@ -8,14 +8,11 @@ from config import config_obj
 
 # Constants from .env
 BULK_DATA_PATH = config_obj.BULK_DATA_PATH
-# Make a dir for bulk data
-if not os.path.exists(BULK_DATA_PATH):
-    os.makedirs(BULK_DATA_PATH)
 
 
 class BulkData:
     def __init__(self):
-        self.df = pd.read_excel(rf"{config_obj.BULK_DATA_PATH}/input.xlsx")
+        self.df = pd.read_excel(rf"{BULK_DATA_PATH}/input.xlsx")
 
     def format_bank_accounts(self):
         """ Apply 'format_bank_account' function on all valid accounts in "Numer konta" column.
@@ -51,12 +48,22 @@ class BulkData:
         """ Saves data in an Excel file and adjust the column width to contained data.
         :return:
         """
-        with pd.ExcelWriter(rf'{config_obj.BULK_DATA_PATH}/output.xlsx', engine='openpyxl', mode='w') as writer:
+        with pd.ExcelWriter(rf'{BULK_DATA_PATH}/output.xlsx', engine='openpyxl', mode='w') as writer:
             self.df.to_excel(writer, sheet_name="output", index=False)
             ws = writer.sheets["output"]
             for column in ws.columns:
                 length = max(len(str(cell.value)) for cell in column)
                 ws.column_dimensions[column[0].column_letter].width = length + 2
+
+    @staticmethod
+    def init_input_file(full_path: str):
+        """ Init an input Excel file with only first header filled.
+        :param full_path: full path to file as string
+        :return:
+        """
+        header = {'A': ['Numer konta']}
+        df = pd.DataFrame(header)
+        df.to_excel(full_path, index=False, header=False, startrow=0, startcol=0)
 
 
 if __name__ == "__main__":

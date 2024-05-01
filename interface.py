@@ -12,9 +12,6 @@ from config import config_obj
 
 # Constants from .env
 BULK_DATA_PATH = config_obj.BULK_DATA_PATH
-# Make a dir for bulk data
-if not os.path.exists(BULK_DATA_PATH):
-    os.makedirs(BULK_DATA_PATH)
 
 
 class Interface(tk.Tk):
@@ -216,4 +213,12 @@ class Interface(tk.Tk):
 
 if __name__ == "__main__":
     # Shouldn't be launched directly - only for debugging purposes
+
+    # Make a dir for bulk data
+    if not os.path.exists(BULK_DATA_PATH):
+        os.makedirs(BULK_DATA_PATH)
+    if not os.path.exists(rf"{BULK_DATA_PATH}/input.xlsx"):
+        BulkData.init_input_file(rf"{BULK_DATA_PATH}/input.xlsx")
+
+    # Run interface
     gui_obj = Interface()
