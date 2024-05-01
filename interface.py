@@ -4,7 +4,7 @@ from tkinter import ttk
 from tkcalendar import Calendar
 from typing import Literal, Dict, Union
 
-from browser import WhiteListBrowser, WHITE_LIST_URL
+from browser import WhiteListBrowser
 from excel import BulkData
 from validations import is_valid_date
 from config import config_obj
@@ -12,6 +12,7 @@ from config import config_obj
 
 # Constants from .env
 BULK_DATA_PATH = config_obj.BULK_DATA_PATH
+WHITE_LIST_URL = config_obj.WHITE_LIST_URL
 
 
 class Interface(tk.Tk):
