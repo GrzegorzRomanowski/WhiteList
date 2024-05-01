@@ -63,7 +63,7 @@ class BulkData:
         """
         header = {'A': ['Numer konta']}
         df = pd.DataFrame(header)
-        df.to_excel(full_path, index=False, header=False, startrow=0, startcol=0)
+        df.to_excel(full_path, index=False, header=False, startrow=0, startcol=0, sheet_name="input")
 
 
 if __name__ == "__main__":
