@@ -20,12 +20,12 @@ class Interface(tk.Tk):
         # Styles
         self.ttk_style = ttk.Style()
         self.ttk_style.configure('Blue.TFrame', background='light blue')
-        self.ttk_style.configure('Green.TFrame', background='green')
+        self.ttk_style.configure('Orange.TFrame', background='orange')
 
         # Main frames
-        self.frame0 = ttk.Frame(self, style='Green.TFrame')
+        self.frame0 = ttk.Frame(self, style='Orange.TFrame')
         self.frame0.place(relx=0, relwidth=0.33, rely=0, relheight=0.2)
-        self.frame1 = ttk.Frame(self, style='Green.TFrame')
+        self.frame1 = ttk.Frame(self, style='Orange.TFrame')
         self.frame1.place(relx=0.33, relwidth=0.67, rely=0, relheight=0.2)
         self.frame2 = ttk.Frame(self, style='Blue.TFrame')
         self.frame2.place(relx=0, relwidth=1, rely=0.2, relheight=0.8)

@@ -4,6 +4,8 @@ from collections import defaultdict
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.support.ui import WebDriverWait as DWait
 from selenium.webdriver.support import expected_conditions as ec
 from selenium.common.exceptions import TimeoutException, NoSuchElementException
@@ -43,6 +45,7 @@ class WhiteListBrowser(Browser):
         """
         self.select_validation_method(2)
         self.input_number("5932167267")
+        self.type_date("22-04-2024")
         self.submit_button()
         print(self.get_results())
 
@@ -76,13 +79,22 @@ class WhiteListBrowser(Browser):
         :param date_str: new date to be typed
         :return:
         """
+        # Click checkbox
         self.driver.find_element(By.XPATH, r'//*[@id="submit"]/div[2]/div[3]/div[2]/div[2]/div/div/label').click()
+        # Wait for input activation
         try:
             DWait(self.driver, WAIT_TIME).until(ec.element_to_be_clickable((By.XPATH, r'//*[@id="inputType3"]')))
         except TimeoutException:
             raise TimeoutException("Timeout reached while typing date.")
-        self.driver.find_element(By.XPATH, r'//*[@id="inputType3"]').clear()
-        self.driver.find_element(By.XPATH, r'//*[@id="inputType3"]').send_keys(date_str)
+        # Perform keys actions (simple clear and send keys didn't work because of active calendar)
+        date_input_element = self.driver.find_element(By.XPATH, r'//*[@id="inputType3"]')
+        actions = ActionChains(self.driver)
+        actions.move_to_element(date_input_element).click()
+        actions.send_keys(Keys.BACKSPACE * 10)
+        actions.send_keys(date_str)
+        actions.perform()
+        # Click on the other input above, only for the calendar to disappear.
+        self.driver.find_element(By.XPATH, r'//*[@id="inputType"]').click()
 
     def submit_button(self):
         """ Click submit button on webpage. On first run button has id="sendTwo", on next run id="sendOne".
@@ -100,7 +112,7 @@ class WhiteListBrowser(Browser):
         :return: dict with results or errors
         """
         results: Dict[str, Union[str, list]] = defaultdict(list)
-        # check if error on webpage is displayed
+        # Check if error on webpage is displayed.
         DWait(self.driver, WAIT_TIME).until(ec.presence_of_element_located((By.XPATH, r'//*[@id="errorBox"]')))
         error_box_visible = self.driver.find_element(By.XPATH, r'//*[@id="errorBox"]').is_displayed()
 
