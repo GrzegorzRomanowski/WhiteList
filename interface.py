@@ -12,6 +12,9 @@ from config import config_obj
 
 # Constants from .env
 BULK_DATA_PATH = config_obj.BULK_DATA_PATH
+# Make a dir for bulk data
+if not os.path.exists(BULK_DATA_PATH):
+    os.makedirs(BULK_DATA_PATH)
 
 
 class Interface(tk.Tk):
@@ -149,11 +152,11 @@ class Interface(tk.Tk):
         cal.pack(fill="both", expand=True)
 
         def set_date():
-            self.entry_date.delete(0, "end")  # Wyczyść aktualną zawartość pola Entry
-            self.entry_date.insert(0, cal.get_date())  # Wstaw wybraną datę do pola Entry
-            top.destroy()  # Zamknij okno kalendarza po wyborze daty
+            self.entry_date.delete(0, "end")  # delete content of entry
+            self.entry_date.insert(0, cal.get_date())  # insert new value
+            top.destroy()  # close calendar
 
-        # Utwórz przycisk do zatwierdzania wybranej daty
+        # Confirm button
         confirm_button = ttk.Button(top, text="Wybierz", command=set_date)
         confirm_button.pack(pady=5)
 
@@ -171,8 +174,7 @@ class Interface(tk.Tk):
         self.print_results()
 
     def run_tab2(self):
-        # Reset progress bar
-        self.progress_bar["value"] = 0
+        self.progress_bar["value"] = 0  # reset progress bar
 
         browser_obj = WhiteListBrowser(WHITE_LIST_URL)
         browser_obj.select_validation_method(1)

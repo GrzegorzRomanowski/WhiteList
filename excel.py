@@ -1,8 +1,16 @@
+import os
 import pandas as pd
 from typing import List, Dict, Union
 
 from validations import is_valid_bank_account, format_bank_account
 from config import config_obj
+
+
+# Constants from .env
+BULK_DATA_PATH = config_obj.BULK_DATA_PATH
+# Make a dir for bulk data
+if not os.path.exists(BULK_DATA_PATH):
+    os.makedirs(BULK_DATA_PATH)
 
 
 class BulkData:
