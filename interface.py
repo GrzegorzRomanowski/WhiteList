@@ -6,6 +6,7 @@ from typing import Literal, Dict, Union
 
 from browser import WhiteListBrowser, WHITE_LIST_URL
 from excel import BulkData
+from validations import is_valid_date
 
 
 class Interface(tk.Tk):
@@ -156,11 +157,11 @@ class Interface(tk.Tk):
         browser_obj = WhiteListBrowser(WHITE_LIST_URL)
         browser_obj.select_validation_method(int(via))
         browser_obj.input_number(number)
+        date = is_valid_date(date)
         if date:
             browser_obj.type_date(date_str=date)
         browser_obj.submit_button()
         self.results = browser_obj.get_results()
-        print(self.results)
         browser_obj.driver.quit()
         self.print_results()
 
@@ -184,7 +185,6 @@ class Interface(tk.Tk):
             self.update_idletasks()
 
         browser_obj.driver.quit()
-        print(bulk_data_obj.df)
         bulk_data_obj.save_output_to_file()
         self.result_text.delete(1.0, tk.END)
         self.result_text.insert(tk.END, bulk_data_obj.df.to_string(index=False,

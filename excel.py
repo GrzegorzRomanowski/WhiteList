@@ -1,7 +1,7 @@
 import pandas as pd
 from typing import List, Dict, Union
 
-from validations import is_bank_account_valid, format_bank_account
+from validations import is_valid_bank_account, format_bank_account
 
 
 class BulkData:
@@ -13,16 +13,16 @@ class BulkData:
         :return:
         """
         self.df["Numer konta"] = self.df["Numer konta"].apply(
-            lambda x: format_bank_account(x) if is_bank_account_valid(x) else x)
+            lambda x: format_bank_account(x) if is_valid_bank_account(x) else x)
 
     def make_list_for_browser(self) -> List[str]:
         """ Make a list of valid accounts to iterate through it and fill "Rezultat" column.
         :return: list of account which can be checked on webpage
         """
         accounts_list = self.df["Numer konta"].to_list()
-        accounts_list = [account for account in accounts_list if is_bank_account_valid(account)]
+        accounts_list = [account for account in accounts_list if is_valid_bank_account(account)]
         self.df["Rezultat"] = self.df["Numer konta"].apply(
-            lambda x: "" if is_bank_account_valid(x) else "BŁĘDNY NUMER KONTA")
+            lambda x: "" if is_valid_bank_account(x) else "BŁĘDNY NUMER KONTA")
         return accounts_list
 
     def write_scraped_data_to_df(self, results: Dict[str, Union[str, list]], bank_account: str):
@@ -54,5 +54,5 @@ if __name__ == "__main__":
     # Shouldn't be launched directly - only for debugging purposes
     bulk_data_obj = BulkData()
     bulk_data_obj.format_bank_accounts()
-    print(bulk_data_obj.make_list_for_browser())
-    print(bulk_data_obj.df)
+    print("List of bank accounts to be checked\n", bulk_data_obj.make_list_for_browser())
+    print("\nDataFrame:\n", bulk_data_obj.df)
