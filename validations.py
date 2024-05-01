@@ -1,6 +1,6 @@
 def cleaning(number: str) -> str:
     """ Remove some commonly used punctuation marks from the string being a number.
-    :param number:-> input number like PL: 80-180
+    :param number: input number like PL: 80-180
     :return: return cleaned number like PL80180
     """
     punctuation_marks_to_be_removed = [" ", "-", "/", "\\", ".", ",", "(", ")", "[", "]", ":"]
@@ -11,7 +11,7 @@ def cleaning(number: str) -> str:
 
 def only_digits(number: str) -> str:
     """ Remains only digits from the string being a number.
-    :param number:-> input number like PL: 80-180
+    :param number: input number like PL: 80-180
     :return: return cleaned number like 80180
     """
     new_number = "".join(char for char in number if char.isdigit())
@@ -20,7 +20,7 @@ def only_digits(number: str) -> str:
 
 def format_bank_account(number: str) -> str:
     """ Format bank account number to contain only digits and spaces.
-    :param number:-> uncleaned bank account
+    :param number: uncleaned bank account
     :return: formatted bank account
     """
     new_number = only_digits(number)
@@ -34,7 +34,7 @@ def format_bank_account(number: str) -> str:
 
 def is_bank_account_valid(bank: str) -> bool:
     """ Validates POLISH bank account number checking the number of digits and modulo.
-    :param bank:-> like a 10 digits string
+    :param bank: like a 10 digits string
     :return: True or False
     """
     bank = cleaning(bank)
@@ -53,7 +53,7 @@ def is_bank_account_valid(bank: str) -> bool:
 
 def is_valid_nip(nip: str) -> bool:
     """ Validates POLISH NIP checking the number of digits and comparing last digit with modulo.
-    :param nip:-> like a 10 digits string
+    :param nip: like a 10 digits string
     :return: True or False
     """
     nip = only_digits(nip)
@@ -76,7 +76,7 @@ def is_valid_nip(nip: str) -> bool:
 
 def is_regon_valid(regon: str) -> bool:
     """ Validates POLISH REGON checking the number of digits and modulo.
-    :param regon:-> like a 7 or 9 digits string
+    :param regon: like a 7 or 9 digits string
     :return: True or False
     """
     regon = only_digits(regon)
