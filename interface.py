@@ -29,11 +29,11 @@ class Interface(tk.Tk):
         self.ttk_style.configure('Orange.TFrame', background='orange')
 
         # Main frames
-        self.frame0 = ttk.Frame(self, style='Orange.TFrame')
+        self.frame0 = ttk.Frame(self, style='Orange.TFrame')  # for photo
         self.frame0.place(relx=0, relwidth=0.33, rely=0, relheight=0.2)
-        self.frame1 = ttk.Frame(self, style='Orange.TFrame')
+        self.frame1 = ttk.Frame(self, style='Orange.TFrame')  # for tabs
         self.frame1.place(relx=0.33, relwidth=0.67, rely=0, relheight=0.2)
-        self.frame2 = ttk.Frame(self, style='Blue.TFrame')
+        self.frame2 = ttk.Frame(self, style='Blue.TFrame')  # for output
         self.frame2.place(relx=0, relwidth=1, rely=0.2, relheight=0.8)
 
         # Photo
@@ -52,18 +52,18 @@ class Interface(tk.Tk):
 
         # Notebooks
         self.notebook = ttk.Notebook(self.frame1)
-        self.tab1 = ttk.Frame(self.notebook)
-        self.tab2 = ttk.Frame(self.notebook)
+        self.tab1 = ttk.Frame(self.notebook)  # for single validation
+        self.tab2 = ttk.Frame(self.notebook)  # for bulk validation
         self.notebook.add(self.tab1, text="  Pojedyncza weryfikacja     ")
         self.notebook.add(self.tab2, text="  Weryfikacja listy w Excelu     ")
         self.notebook.pack(fill='both', expand=True, padx=5, pady=5)
 
         # region Tab1
-        self.frame1_tab1 = ttk.Frame(self.tab1)
+        self.frame1_tab1 = ttk.Frame(self.tab1)  # for radio_buttons
         self.frame1_tab1.place(relx=0, relwidth=0.3, rely=0, relheight=0.75)
-        self.frame2_tab1 = ttk.Frame(self.tab1)
+        self.frame2_tab1 = ttk.Frame(self.tab1)  # for input a number
         self.frame2_tab1.place(relx=0.3, relwidth=0.4, rely=0, relheight=0.75)
-        self.frame3_tab1 = ttk.Frame(self.tab1)
+        self.frame3_tab1 = ttk.Frame(self.tab1)  # for date changing
         self.frame3_tab1.place(relx=0.7, relwidth=0.3, rely=0, relheight=0.75)
         # Radio buttons
         self.validation_method_var = tk.IntVar(value=1)
@@ -101,9 +101,9 @@ class Interface(tk.Tk):
         # endregion
 
         # region Tab2
-        self.frame1_tab2 = ttk.Frame(self.tab2)
+        self.frame1_tab2 = ttk.Frame(self.tab2)  # for Excel buttons
         self.frame1_tab2.place(relx=0, relwidth=1, rely=0, relheight=0.5)
-        self.frame2_tab2 = ttk.Frame(self.tab2)
+        self.frame2_tab2 = ttk.Frame(self.tab2)  # for progress bar
         self.frame2_tab2.place(relx=0, relwidth=1, rely=0.5, relheight=0.25)
         # Tab2 buttons
         self.button1_tab2 = ttk.Button(self.frame1_tab2,
@@ -129,6 +129,9 @@ class Interface(tk.Tk):
         self.mainloop()
 
     def entry_on_off(self):
+        """ Turn on/off an entry for data.
+        :return:
+        """
         if self.changed_date_var.get():
             self.entry_date.config(state="normal")
             self.select_date_button.config(state="normal")
@@ -138,17 +141,26 @@ class Interface(tk.Tk):
             self.select_date_button.config(state="disabled")
 
     def get_data_from_tab1(self) -> (Literal[1, 2, 3], str, str):
+        """ Get data from User from tab 1.
+        :return: (validation method, number to validation, date)
+        """
         different_date_bool = self.changed_date_var.get()
         different_date_str = self.entry_date.get() if different_date_bool else ""
         return self.validation_method_var.get(), self.entry_number.get(), different_date_str
 
     def select_date(self):
+        """ Opens calendar window from tkinter.
+        :return:
+        """
         top = tk.Toplevel(self)
         top.iconbitmap(r"tax.ico")
         cal = Calendar(top, selectmode="day", date_pattern="dd-mm-yyyy")
         cal.pack(fill="both", expand=True)
 
         def set_date():
+            """ Put a date from calendar to entry for date and destroy calendar window.
+            :return:
+            """
             self.entry_date.delete(0, "end")  # delete content of entry
             self.entry_date.insert(0, cal.get_date())  # insert new value
             top.destroy()  # close calendar
@@ -158,6 +170,9 @@ class Interface(tk.Tk):
         confirm_button.pack(pady=5)
 
     def run_tab1(self):
+        """ Runs a browser for single validation.
+        :return:
+        """
         via, number, date = self.get_data_from_tab1()
         browser_obj = WhiteListBrowser(WHITE_LIST_URL)
         browser_obj.select_validation_method(int(via))
@@ -171,6 +186,9 @@ class Interface(tk.Tk):
         self.print_results()
 
     def run_tab2(self):
+        """ Runs a browser for bulk validation.
+        :return:
+        """
         self.progress_bar["value"] = 0  # reset progress bar
 
         browser_obj = WhiteListBrowser(WHITE_LIST_URL)
@@ -197,10 +215,17 @@ class Interface(tk.Tk):
 
     @staticmethod
     def open_excel_file(path: str):
+        """ Opens a file in an active Excel application.
+        :param path: Path to input or output file.
+        :return:
+        """
         full_path = os.path.abspath(path)
         os.system(f'start "EXCEL.EXE" "{full_path}"')
 
     def print_results(self):
+        """ Unpack data from dictionary and print them into output field in User interface.
+        :return:
+        """
         if len(self.results["error"]) > 1:
             unpack_data = self.results["error"]
         else:
