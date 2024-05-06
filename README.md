@@ -1,68 +1,56 @@
-## The project is in the development phase!!!
+# White List
+
+## Quick introduce
+The application checks whether the given company is listed on the Polish government website for taxes,
+called the <i>'White List of VAT Payers'</i>. Is possible to check a single payer or multiple payers at once
+(using an Excel spreadsheet) without opening a web browser.
+
+## Single and bulk mode
+
+The application have two tabs. One for single validation by using bank account, NIP or REGON number.
+In this mode result will be printed directly in text frame in the app interface.
+
+The second tab is for bulk validations using Excel files. On the first run folder <i>data</i> with 
+<i>input.xlsx</i> will be created. Input Excel file contains one column for a bank accounts. Only polish
+bank accounts with 26 digits are allowed. After the first run in bulk mode <i>output.xlsx</i> file will 
+be created with 3 columns. Be careful because the Output file will always be overwritten after 
+every bulk mode run!
+
+## How to prepare and run the App?
 
 <details>
-# Spis treści
-* [Cel i krótki opis](#szczegóły-projektu)
-* [Biblioteki](#biblioteki)
-* [Używane programy/strony/foldery](#używane-programystronyfoldery)
-* [Uruchomienie](#uruchomienie)
+<summary><b>1. First way: Simply using <i>WhiteList.exe</i> file. (recommended)</b></summary>
+
+1. Copy <i>WhiteList.exe</i> file from <i>dist</i> folder and run it.
+2. Excel files with bulk files will be available in folder <i>data</i> which will be made in the same
+directory where <i>WhiteList.exe</i> is.
+</details>
+
+<details>
+<summary><b>2. Second way: Clone repository if Python interpreter is installed.</b></summary>
 
 
-## Szczegóły projektu
-<summary>
-Kliknij tutaj, aby rozwinąć opis projektu.
-</summary>
-
-### Cel
-Krótki opis projektu.
-
-### Harmonogram
-Krótki opis harmonogramu uruchomienia projektu. W tabeli poniżej można uzupełnić argumenty z jakimi robot ma pracować lub rozpisać godziny i dni jego pracy.
-
-| # | nagłówek | nagłówek | nagłówek | nagłówek | nagłówek |
-|---|---|---|---|---|---|
-|1|treść|treść|treść|treść|treść|
-|2|treść|treść|treść|treść|treść|
-|3|treść|treść|treść|treść|treść|
-|...|treść|treść|treść|treść|treść|
-
-### Opis
-Skrócony opis procesu TO BE (robot):
-1. ...
-2. ...
-3. ...
-
-Pełny opisy procesu znajduje się na dysku:
-```
-P:\Dział BI i RPA\Zespół RPA\Projekty\...
-```
-
-
-
-
-## Biblioteki
-| # | Nazwa | Wersja | Uwagi |
-|---|---|---|---|
-| 1. | ... | ... | ...
-| 2. | ... | ... | ...
-| 3. | ... | ... | ...
-| 4. | ...	| ... | ...
-| 5. | ...	| ... | ...
-
-## Używane programy/strony/foldery
-* Python - *środowisko do zarządzania automatyzacją.*
-* Data\Input\... - *opis*
-* Data\Output\... - *opis*
-* Data\Temp\... - *opis*
-
-## Uruchomienie
-Robota można uruchomić w środowisku testowym oraz produkcyjnym.
-
-### Środowisko produkcyjne
-Instrukcja i opis jak uruchamiany jest robot na produkcji.
-
-### Środowisko testowe
-Instrukcja i opis jak uruchamiać robota do testów.
-
-> **_NOTE:_** Ewentualne ważne uwagi.
+1. Clone this project.
+2. You need to have installed Python 3 (the script was developed on version 3.11).
+3. Create a virtual environment and install requirements:
+- go to the folder where you cloned the project from the repository
+~~~Windows PowerShell
+PS> cd "path_with_cloned_project"
+~~~
+- create a virtual environment
+~~~Windows PowerShell
+PS> python -m venv venv
+~~~
+- activate it
+~~~Windows PowerShell
+PS> venv\Scripts\activate
+~~~
+- ensure you are using a virtual environment by checking the prefix (venv) in your console and
+then install the requirements
+~~~Windows PowerShell
+(venv) PS> python -m pip install -r requirements.txt
+~~~
+4. Run the "<i>main.py</i>" file.
+5. Other Python files '<i>(...).py</i>' shouldn't be launched directly.
+6. Excel files with bulk results will be available in folder <i>data</i>.
 </details>
