@@ -1,4 +1,5 @@
 import os
+import sys
 import tkinter as tk
 from tkinter import ttk
 from tkcalendar import Calendar
@@ -15,11 +16,28 @@ BULK_DATA_PATH = config_obj.BULK_DATA_PATH
 WHITE_LIST_URL = config_obj.WHITE_LIST_URL
 
 
+# Function for pyinstaller
+def resource_path(relative_path):
+    """ Get absolute path to resource, works for dev and for PyInstaller.
+    """
+    try:
+        # PyInstaller creates a temp folder and stores path in _MEIPASS
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+
+    return os.path.join(base_path, relative_path)
+
+
+logo_ico_path = resource_path("tax.ico")
+logo_png_path = resource_path("tax.png")
+
+
 class Interface(tk.Tk):
     def __init__(self):
         super().__init__()
         self.title("White List")
-        self.iconbitmap(r"tax.ico")
+        self.iconbitmap(logo_ico_path)
         self.geometry("744x735")
 
         # Saved values
@@ -46,7 +64,7 @@ class Interface(tk.Tk):
             self.photo_label.configure(image=resized_photo)
             self.photo_label.image = resized_photo
 
-        self.photo = tk.PhotoImage(file="tax.png")
+        self.photo = tk.PhotoImage(file=logo_png_path)
         self.photo_label = ttk.Label(self.frame0, background="Yellow", anchor="center", image=self.photo)
         self.photo_label.pack(fill="both", expand=True)
         self.photo_label.bind("<Configure>", resize_image)
